@@ -8,7 +8,7 @@ const errorConverter = (err, req, res, next) => {
   if (!(error instanceof ApiError)) {
     const statusCode = error.statusCode;
     const message = error.message || httpStatus[statusCode];
-    error = new ApiError(statusCode, message, false, err.stack);
+    error = new ApiError(statusCode, message);
   }
   next(error);
 };
