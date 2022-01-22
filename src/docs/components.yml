@@ -1,0 +1,42 @@
+components:
+  schemas:
+    LineItem:
+      type: object
+      properties:
+        id:
+          type: string
+        start_date:
+          type: string
+        end_date:
+          type: string
+        total_amount:
+          type: number
+      example:
+        id: 1
+        start_date: 2022-01-22T07:28:10+0000
+        end_date: 2022-02-22T07:28:10+0000
+        total_amount: 100.10
+
+    LineItems:
+      type: array
+      items:
+        $ref: '#/components/schemas/LineItem'
+
+    Error:
+      type: object
+      properties:
+        code:
+          type: number
+        message:
+          type: string
+
+  responses:
+    NotFound:
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: 404
+            message: Not found
