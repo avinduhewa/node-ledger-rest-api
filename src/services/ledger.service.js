@@ -20,7 +20,23 @@ const formatAmount = (amount) => {
 const getUpdatedEndDate = {
   [WEEKLY]: (date) => date.add(6, DAYS),
   [FORTNIGHTLY]: (date) => date.add(13, DAYS),
-  [MONTHLY]: (date) => date.add(1, MONTHS),
+  [MONTHLY]: (currentDate) => {
+    let currentMonthStart = moment(currentDate).startOf(MONTHS);
+    let currentMonthEnd = moment(currentDate).endOf(MONTHS);
+    const isFirstOfMonth = currentDate.date() == currentMonthStart.date();
+    const isEndOfMonth = currentDate.date() == currentMonthEnd.date();
+    let futureMonth = moment(currentDate).add(1, MONTHS);
+
+    if (isFirstOfMonth) futureMonth = moment(currentDate);
+    if (isFirstOfMonth || isEndOfMonth) {
+      futureMonth
+        .endOf(MONTHS)
+        .utc(0)
+        .set({ hour: 0, minute: 0, second: 0, millisecond: 0 });
+    }
+
+    return futureMonth;
+  },
 };
 
 const getRentAmount = {
@@ -32,8 +48,8 @@ const getRentAmount = {
 
 /**
  * Create Line Items
- * @param {string} start - Start date of the ledger
- * @param {string} end - The end date of the ledger
+ * @param {Date} start - Start date of the ledger
+ * @param {Date} end - The end date of the ledger
  * @param {number} amount - The rent amount
  * @returns {Object}
  */
@@ -62,6 +78,7 @@ const createLineItems = ({
 }) => {
   try {
     // Set timezone
+    // moment.tz.setDefault(timezone);
     moment.tz(timezone).format();
     let start = moment(start_date);
     const end = moment(end_date);
@@ -83,9 +100,10 @@ const createLineItems = ({
       let endDate = getUpdatedEndDate[frequency](moment(start));
 
       let rent = getRentAmount[frequency](weekly_rent);
-
       // Get custom duration if endDate is greater than the end of lease
-      if (endDate > end) {
+      if (
+        moment(endDate).format("YYYY-MM-DD") > moment(end).format("YYYY-MM-DD")
+      ) {
         const numberOfDays = end.diff(
           // reduce one day to include current date
           moment(start).subtract(1, DAYS),
@@ -94,11 +112,10 @@ const createLineItems = ({
         rent = getRentAmount[CUSTOM](weekly_rent, numberOfDays);
         endDate = end;
       }
-
       lineItems.push(createLineItem(start, endDate, rent));
 
       // shift starting day to the following day/month
-      start = endDate.add(1, frequency === MONTHLY ? MONTHLY : DAYS);
+      start = endDate.add(1, DAYS);
     }
     return lineItems;
   } catch (err) {

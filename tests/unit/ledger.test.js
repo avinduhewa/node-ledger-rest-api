@@ -103,17 +103,17 @@ describe("Accounting Ledger creation service", () => {
       const expected = [
         {
           start_date: "2022-01-01T00:00:00.000Z",
-          end_date: "2022-02-01T00:00:00.000Z",
+          end_date: "2022-01-31T00:00:00.000Z",
           amount: 1303.57,
         },
         {
           start_date: "2022-02-01T00:00:00.000Z",
-          end_date: "2022-03-01T00:00:00.000Z",
+          end_date: "2022-02-28T00:00:00.000Z",
           amount: 1303.57,
         },
         {
           start_date: "2022-03-01T00:00:00.000Z",
-          end_date: "2022-04-01T00:00:00.000Z",
+          end_date: "2022-03-31T00:00:00.000Z",
           amount: 1303.57,
         },
       ];
@@ -188,24 +188,95 @@ describe("Accounting Ledger creation service", () => {
 });
 
 describe("Should calculate line item amount", () => {
-  const rent = 200;
+  const weekly_rent = 200;
   it("Should calculate correct amount for WEEKLY", () => {
-    expect(ledgerService.getRentAmount[WEEKLY](rent)).toBe(200);
+    expect(ledgerService.getRentAmount[WEEKLY](weekly_rent)).toBe(200);
   });
 
   it("Should calculate correct amount for FORTNIGHTLY", () => {
-    expect(ledgerService.getRentAmount[FORTNIGHTLY](rent)).toBe(400);
+    expect(ledgerService.getRentAmount[FORTNIGHTLY](weekly_rent)).toBe(400);
   });
 
   it("Should calculate correct amount for MONTHLY", () => {
-    expect(ledgerService.getRentAmount[MONTHLY](rent)).toBe(869.05);
+    expect(ledgerService.getRentAmount[MONTHLY](weekly_rent)).toBe(869.05);
   });
 
   it("Should calculate correct amount for CUSTOM", () => {
-    expect(ledgerService.getRentAmount[CUSTOM](rent, 5)).toBe(142.86);
+    expect(ledgerService.getRentAmount[CUSTOM](weekly_rent, 5)).toBe(142.86);
   });
 
   it("Should throw error for incorrect frequency", () => {
-    expect(() => ledgerService.getRentAmount["YEARLY"](rent)).toThrow();
+    expect(() => ledgerService.getRentAmount["YEARLY"](weekly_rent)).toThrow();
+  });
+});
+
+describe("Should handle monthly end date scenario", () => {
+  const start_date = "2022-01-31T00:00:00+0000";
+  const weekly_rent = 200;
+  const frequency = MONTHLY;
+  const timezone = "Asia/Colombo";
+
+  it("Should calculate correct amount for MONTHLY", () => {
+    expect(
+      ledgerService.createLineItems({
+        start_date,
+        frequency,
+        weekly_rent,
+        timezone,
+        end_date: "2022-02-28T00:00:00+0000",
+      })
+    ).toEqual([
+      {
+        start_date: "2022-01-31T00:00:00.000Z",
+        end_date: "2022-02-28T00:00:00.000Z",
+        amount: 869.05,
+      },
+    ]);
+  });
+
+  it("Should calculate correct amount for MONTHLY", () => {
+    expect(
+      ledgerService.createLineItems({
+        start_date,
+        frequency,
+        weekly_rent,
+        timezone,
+        end_date: "2022-04-15T00:00:00+0000",
+      })
+    ).toEqual([
+      {
+        start_date: "2022-01-31T00:00:00.000Z",
+        end_date: "2022-02-28T00:00:00.000Z",
+        amount: 869.05,
+      },
+      {
+        start_date: "2022-03-01T00:00:00.000Z",
+        end_date: "2022-03-31T00:00:00.000Z",
+        amount: 869.05,
+      },
+      {
+        start_date: "2022-04-01T00:00:00.000Z",
+        end_date: "2022-04-15T00:00:00.000Z",
+        amount: 428.57,
+      },
+    ]);
+  });
+
+  it("Should calculate correct amount for Partial MONTHLY", () => {
+    expect(
+      ledgerService.createLineItems({
+        start_date,
+        frequency,
+        weekly_rent,
+        timezone,
+        end_date: "2022-02-15T00:00:00+0000",
+      })
+    ).toEqual([
+      {
+        start_date: "2022-01-31T00:00:00.000Z",
+        end_date: "2022-02-15T00:00:00.000Z",
+        amount: 457.14,
+      },
+    ]);
   });
 });
