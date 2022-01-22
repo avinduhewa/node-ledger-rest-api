@@ -7,44 +7,34 @@ const {
   MONTHLY,
   DAYS,
   MONTHS,
+  CUSTOM,
 } = require("../config/constants");
 
-/**
- * Get Updated End Date
- * @param {Date} date - Date object
- * @param {string} frequency - Payment frequency of the ledger
- * @returns {Date}
- */
-const getUpdatedEndDate = (date, frequency) => {
-  let endDate;
-  if (frequency === WEEKLY) {
-    endDate = date.add(7, DAYS);
-  } else if (frequency === FORTNIGHTLY) {
-    endDate = date.add(14, DAYS);
-  } else if (frequency === MONTHLY) {
-    endDate = date.add(1, MONTHS);
-  }
-  return endDate;
+const getUpdatedEndDate = {
+  [WEEKLY]: (date) => date.add(7, DAYS),
+  [FORTNIGHTLY]: (date) => date.add(14, DAYS),
+  [MONTHLY]: (date) => date.add(1, MONTHS),
+};
+
+const getRentAmount = {
+  [WEEKLY]: (rent) => rent,
+  [FORTNIGHTLY]: (rent) => rent * 2,
+  [MONTHLY]: (rent) => ((rent / 7) * 365) / 12,
+  [CUSTOM]: (rent, numberOfDays) => (rent / 7) * numberOfDays,
 };
 
 /**
- * Get Rent Amount
- * @param {number} weeklyRent - The weekly amount of the ledger
- * @param {string} frequency - Payment frequency of the ledger
- * @param {number} numberOfDays - If duration is less than frequency use custom number
- * @returns {number}
+ * Create Line Items
+ * @param {string} start - Start date of the ledger
+ * @param {string} end - The end date of the ledger
+ * @param {number} amount - The rent amount
+ * @returns {Object}
  */
-const getRentAmount = (weeklyRent, frequency, numberOfDays = 0) => {
-  let amount = weeklyRent;
-  if (numberOfDays) {
-    amount = (weeklyRent / 7) * numberOfDays;
-  } else if (frequency === FORTNIGHTLY) {
-    amount = weeklyRent * 2;
-  } else if (frequency === MONTHLY) {
-    amount = ((weeklyRent / 7) * 365) / 12;
-  }
-  return parseFloat(amount.toFixed(2), 10);
-};
+const createLineItem = (start, end, amount) => ({
+  start_date: start.toISOString(),
+  end_date: end.toISOString(),
+  amount: parseFloat(amount.toFixed(2)),
+});
 
 /**
  * Create Line Items
@@ -70,18 +60,19 @@ const createLineItems = ({
 
   const lineItems = [];
   while (start < end) {
-    let endDate = getUpdatedEndDate(start, frequency);
-    let numberOfDays = 0;
+    let endDate = getUpdatedEndDate[frequency](moment(start));
 
+    let rent = getRentAmount[frequency](weekly_rent);
+
+    // Get custom duration if endDate is greater than the end of lease
     if (endDate > end) {
-      numberOfDays = start.diff(end, DAYS);
+      const numberOfDays = end.diff(start, DAYS);
+      rent = getRentAmount[CUSTOM](weekly_rent, numberOfDays);
+      endDate = end;
     }
 
-    lineItems.push({
-      start_date: start.toISOString(),
-      end_data: endDate.toISOString(),
-      amount: getRentAmount(weekly_rent, frequency, numberOfDays),
-    });
+    lineItems.push(createLineItem(start, endDate, rent));
+
     start = endDate;
   }
   return lineItems;
