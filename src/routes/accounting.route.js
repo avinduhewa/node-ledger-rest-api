@@ -2,8 +2,10 @@ const express = require("express");
 const validate = require("../middlewares/validate");
 const accountingValidation = require("../validations/accounting.validation");
 const accountingController = require("../controllers/accounting.controller");
+const authorize = require("../middlewares/auth");
 
 const router = express.Router();
+router.use(authorize);
 
 router
   .route("/ledger")
@@ -21,6 +23,8 @@ module.exports = router;
  *     summary: Get accounting ledger for a given lease
  *     description: Generate a ledger based on parameters
  *     tags: [Accounting]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: query
  *         name: start_date
