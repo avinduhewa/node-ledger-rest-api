@@ -10,6 +10,7 @@ const {
   CUSTOM,
 } = require("../config/constants");
 const logger = require("../config/logger");
+const { getNextMonth, getDayDifference, getDate } = require("../utils/date");
 
 const F = [WEEKLY, FORTNIGHTLY, MONTHLY];
 
@@ -17,47 +18,22 @@ const formatAmount = (amount) => {
   return Math.round(amount * 100) / 100;
 };
 
-const getUpdatedEndDate = {
-  [WEEKLY]: (date) => date.add(6, DAYS),
-  [FORTNIGHTLY]: (date) => date.add(13, DAYS),
-  [MONTHLY]: (currentDate) => {
-    let currentMonthStart = moment(currentDate).startOf(MONTHS);
-    let currentMonthEnd = moment(currentDate).endOf(MONTHS);
-    const isFirstOfMonth = currentDate.date() == currentMonthStart.date();
-    const isEndOfMonth = currentDate.date() == currentMonthEnd.date();
-    let futureMonth = moment(currentDate).add(1, MONTHS);
-
-    if (isFirstOfMonth) futureMonth = moment(currentDate);
-    if (isFirstOfMonth || isEndOfMonth) {
-      futureMonth
-        .endOf(MONTHS)
-        .utc(0)
-        .set({ hour: 0, minute: 0, second: 0, millisecond: 0 });
-    }
-
-    return futureMonth;
-  },
+const formatDate = (date) => {
+  return date.toISOString();
 };
 
-const getRentAmount = {
+const getNextPaymentFrequencyDate = {
+  [WEEKLY]: (date) => date.add(6, DAYS),
+  [FORTNIGHTLY]: (date) => date.add(13, DAYS),
+  [MONTHLY]: (currentDate) => getNextMonth(currentDate),
+};
+
+const calculateRent = {
   [WEEKLY]: (rent) => formatAmount(rent),
   [FORTNIGHTLY]: (rent) => formatAmount(rent * 2),
   [MONTHLY]: (rent) => formatAmount(((rent / 7) * 365) / 12),
   [CUSTOM]: (rent, numberOfDays) => formatAmount((rent / 7) * numberOfDays),
 };
-
-/**
- * Create Line Items
- * @param {Date} start - Start date of the ledger
- * @param {Date} end - The end date of the ledger
- * @param {number} amount - The rent amount
- * @returns {Object}
- */
-const createLineItem = (start, end, amount) => ({
-  start_date: start.toISOString(),
-  end_date: end.toISOString(),
-  amount,
-});
 
 /**
  * Create Line Items
@@ -78,8 +54,7 @@ const createLineItems = ({
 }) => {
   try {
     // Set timezone
-    // moment.tz.setDefault(timezone);
-    moment.tz(timezone).format();
+    moment.tz.setDefault(timezone);
     let start = moment(start_date);
     const end = moment(end_date);
 
@@ -97,22 +72,21 @@ const createLineItems = ({
 
     // loop through the duration of the lease
     while (start < end) {
-      let endDate = getUpdatedEndDate[frequency](moment(start));
+      let endDate = getNextPaymentFrequencyDate[frequency](moment(start));
+      let amount = calculateRent[frequency](weekly_rent);
 
-      let rent = getRentAmount[frequency](weekly_rent);
       // Get custom duration if endDate is greater than the end of lease
-      if (
-        moment(endDate).format("YYYY-MM-DD") > moment(end).format("YYYY-MM-DD")
-      ) {
-        const numberOfDays = end.diff(
-          // reduce one day to include current date
-          moment(start).subtract(1, DAYS),
-          DAYS
-        );
-        rent = getRentAmount[CUSTOM](weekly_rent, numberOfDays);
+      if (getDate(endDate) > getDate(end)) {
+        const numberOfDays = getDayDifference(start, end);
+        amount = calculateRent[CUSTOM](weekly_rent, numberOfDays);
         endDate = end;
       }
-      lineItems.push(createLineItem(start, endDate, rent));
+
+      lineItems.push({
+        start_date: formatDate(start),
+        end_date: formatDate(endDate),
+        amount,
+      });
 
       // shift starting day to the following day/month
       start = endDate.add(1, DAYS);
@@ -124,7 +98,7 @@ const createLineItems = ({
 };
 
 module.exports = {
-  getUpdatedEndDate,
-  getRentAmount,
+  getNextPaymentFrequencyDate,
+  calculateRent,
   createLineItems,
 };

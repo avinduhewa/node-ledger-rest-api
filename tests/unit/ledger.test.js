@@ -190,23 +190,23 @@ describe("Accounting Ledger creation service", () => {
 describe("Should calculate line item amount", () => {
   const weekly_rent = 200;
   it("Should calculate correct amount for WEEKLY", () => {
-    expect(ledgerService.getRentAmount[WEEKLY](weekly_rent)).toBe(200);
+    expect(ledgerService.calculateRent[WEEKLY](weekly_rent)).toBe(200);
   });
 
   it("Should calculate correct amount for FORTNIGHTLY", () => {
-    expect(ledgerService.getRentAmount[FORTNIGHTLY](weekly_rent)).toBe(400);
+    expect(ledgerService.calculateRent[FORTNIGHTLY](weekly_rent)).toBe(400);
   });
 
   it("Should calculate correct amount for MONTHLY", () => {
-    expect(ledgerService.getRentAmount[MONTHLY](weekly_rent)).toBe(869.05);
+    expect(ledgerService.calculateRent[MONTHLY](weekly_rent)).toBe(869.05);
   });
 
   it("Should calculate correct amount for CUSTOM", () => {
-    expect(ledgerService.getRentAmount[CUSTOM](weekly_rent, 5)).toBe(142.86);
+    expect(ledgerService.calculateRent[CUSTOM](weekly_rent, 5)).toBe(142.86);
   });
 
   it("Should throw error for incorrect frequency", () => {
-    expect(() => ledgerService.getRentAmount["YEARLY"](weekly_rent)).toThrow();
+    expect(() => ledgerService.calculateRent["YEARLY"](weekly_rent)).toThrow();
   });
 });
 
