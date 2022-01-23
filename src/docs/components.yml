@@ -30,17 +30,6 @@ components:
         message:
           type: string
 
-  responses:
-    NotFound:
-      description: Not found
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            code: 404
-            message: Not found
-
   securitySchemes:
     bearerAuth:
       type: http

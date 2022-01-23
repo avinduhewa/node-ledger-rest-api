@@ -71,6 +71,7 @@ const createLineItems = ({
     }
 
     // loop through the duration of the lease
+    let id = 1;
     while (start < end) {
       let endDate = getNextPaymentFrequencyDate[frequency](moment(start));
       let amount = calculateRent[frequency](weekly_rent);
@@ -83,6 +84,7 @@ const createLineItems = ({
       }
 
       lineItems.push({
+        id, // added to easily identify line items
         start_date: formatDate(start),
         end_date: formatDate(endDate),
         amount,
@@ -90,6 +92,7 @@ const createLineItems = ({
 
       // shift starting day to the following day/month
       start = endDate.add(1, DAYS);
+      id += 1;
     }
     return lineItems;
   } catch (err) {

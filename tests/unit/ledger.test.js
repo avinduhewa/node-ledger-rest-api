@@ -22,26 +22,31 @@ describe("Accounting Ledger creation service", () => {
 
       const expected = [
         {
+          id: 1,
           start_date: "2022-01-01T00:00:00.000Z",
           end_date: "2022-01-07T00:00:00.000Z",
           amount: 300,
         },
         {
+          id: 2,
           start_date: "2022-01-08T00:00:00.000Z",
           end_date: "2022-01-14T00:00:00.000Z",
           amount: 300,
         },
         {
+          id: 3,
           start_date: "2022-01-15T00:00:00.000Z",
           end_date: "2022-01-21T00:00:00.000Z",
           amount: 300,
         },
         {
+          id: 4,
           start_date: "2022-01-22T00:00:00.000Z",
           end_date: "2022-01-28T00:00:00.000Z",
           amount: 300,
         },
         {
+          id: 5,
           start_date: "2022-01-29T00:00:00.000Z",
           end_date: "2022-02-01T00:00:00.000Z",
           amount: 171.43,
@@ -62,26 +67,31 @@ describe("Accounting Ledger creation service", () => {
 
       const expected = [
         {
+          id: 1,
           start_date: "2022-03-28T00:00:00.000Z",
           end_date: "2022-04-10T00:00:00.000Z",
           amount: 1110,
         },
         {
+          id: 2,
           start_date: "2022-04-11T00:00:00.000Z",
           end_date: "2022-04-24T00:00:00.000Z",
           amount: 1110,
         },
         {
+          id: 3,
           start_date: "2022-04-25T00:00:00.000Z",
           end_date: "2022-05-08T00:00:00.000Z",
           amount: 1110,
         },
         {
+          id: 4,
           start_date: "2022-05-09T00:00:00.000Z",
           end_date: "2022-05-22T00:00:00.000Z",
           amount: 1110,
         },
         {
+          id: 5,
           start_date: "2022-05-23T00:00:00.000Z",
           end_date: "2022-05-27T00:00:00.000Z",
           amount: 396.43,
@@ -102,16 +112,19 @@ describe("Accounting Ledger creation service", () => {
 
       const expected = [
         {
+          id: 1,
           start_date: "2022-01-01T00:00:00.000Z",
           end_date: "2022-01-31T00:00:00.000Z",
           amount: 1303.57,
         },
         {
+          id: 2,
           start_date: "2022-02-01T00:00:00.000Z",
           end_date: "2022-02-28T00:00:00.000Z",
           amount: 1303.57,
         },
         {
+          id: 3,
           start_date: "2022-03-01T00:00:00.000Z",
           end_date: "2022-03-31T00:00:00.000Z",
           amount: 1303.57,
@@ -227,6 +240,7 @@ describe("Should handle monthly end date scenario", () => {
       })
     ).toEqual([
       {
+        id: 1,
         start_date: "2022-01-31T00:00:00.000Z",
         end_date: "2022-02-28T00:00:00.000Z",
         amount: 869.05,
@@ -245,16 +259,19 @@ describe("Should handle monthly end date scenario", () => {
       })
     ).toEqual([
       {
+        id: 1,
         start_date: "2022-01-31T00:00:00.000Z",
         end_date: "2022-02-28T00:00:00.000Z",
         amount: 869.05,
       },
       {
+        id: 2,
         start_date: "2022-03-01T00:00:00.000Z",
         end_date: "2022-03-31T00:00:00.000Z",
         amount: 869.05,
       },
       {
+        id: 3,
         start_date: "2022-04-01T00:00:00.000Z",
         end_date: "2022-04-15T00:00:00.000Z",
         amount: 428.57,
@@ -273,6 +290,7 @@ describe("Should handle monthly end date scenario", () => {
       })
     ).toEqual([
       {
+        id: 1,
         start_date: "2022-01-31T00:00:00.000Z",
         end_date: "2022-02-15T00:00:00.000Z",
         amount: 457.14,
