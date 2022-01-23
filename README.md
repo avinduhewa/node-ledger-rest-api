@@ -6,6 +6,8 @@
 - if calculating for monthly frequency the start date is the first day of the month the end date will be the last day of that month
 - if calculating for monthly frequency the start day is the last of the month the end date will be the last day of the following month
 
+_PS: since the `ledger.service` doesnt maintain a state and simply transforms the input a functional programming approach has been applied_
+
 ## Pre-Requisites
 
 - Node.js v12 or above
@@ -28,9 +30,12 @@ _PS: Swagger is only available if you run in `development` mode_
 ## Calling the API
 
 - Swagger Documentation can be used to test the API using `http://localhost:3000/api/docs` 
-- The ledger generation endpoint is `/api/accounting/ledger` , the parameter information is provided in the documentation (PS - make sure you add the generated token using the `Authorize` button in swagger)
+- make sure you add the generated token using the `Authorize` button in swagger
+- The ledger generation endpoint is `GET` `/api/accounting/ledger` , the parameter information is provided in the documentation
 
-- You can also test the API using CURL by using the following command (just make sure to add the corect parameters) - (also make sure to use the token you copied earlier as well)
+- You can also test the API using CURL by using the following command (just make sure to add the corect parameters)
+
+**NOTE: replace the `{token}` with the token value you generated earlier before runnning the following curl command**
 
 ```curl -X 'GET' \ 'http://localhost:3000/api/accounting/ledger?start_date=2022-01-01T00:00:00+0000&end_date=2022-02-01T00:00:00+0000&frequency=WEEKLY&weekly_rent=300&timezone=Asia/Colombo' \ -H 'accept: application/json' \ -H 'Authorization: Bearer {token}'```
 
