@@ -1,16 +1,17 @@
+const httpStatus = require("http-status");
+const { restart } = require("pm2");
 const { createLineItems } = require("../services/ledger.service");
-const catchAsync = require("../utils/catchAsync");
 
-const getLedger = catchAsync(async (req, res, next) => {
+const getLedger = async (req, res) => {
   try {
     const lineItems = createLineItems(req.query);
-    res.status(200).send({
+    res.status(httpStatus.OK).send({
       data: lineItems,
     });
   } catch (error) {
-    next(error);
+    res.status(httpStatus.INTERNAL_SERVER_ERROR);
   }
-});
+};
 
 module.exports = {
   getLedger,

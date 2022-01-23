@@ -15,7 +15,8 @@
     "prettier": "prettier --check **/*.js",
     "prettier:fix": "prettier --write **/*.js",
     "token:generate": "cross-env node ./scripts/generate-token.js",
-    "setup:env": "cp ./.env.example ./.env"
+    "setup:env:bash": "cross-env cp ./.env.example ./.env",
+    "setup:env:cmd": "cross-env copy ./.env.example ./.env"
   },
   "pre-commit": [
     "test",

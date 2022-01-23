@@ -6,7 +6,6 @@ const {
   FORTNIGHTLY,
   MONTHLY,
   DAYS,
-  MONTHS,
   CUSTOM,
 } = require("../config/constants");
 const logger = require("../config/logger");
@@ -62,12 +61,12 @@ const createLineItems = ({
 
     if (!frequency || !F.includes(frequency)) {
       logger.error("Frequency is invalid");
-      throw new ApiError(httpStatus.BAD_REQUEST, "Frequency is invalid");
+      throw new Error(httpStatus.BAD_REQUEST, "Frequency is invalid");
     }
 
     if (!weekly_rent || isNaN(weekly_rent) || weekly_rent <= 0) {
       logger.error("Weekly Rent is invalid");
-      throw new ApiError(httpStatus.BAD_REQUEST, "Weekly Rent is invalid");
+      throw new Error(httpStatus.BAD_REQUEST, "Weekly Rent is invalid");
     }
 
     // loop through the duration of the lease

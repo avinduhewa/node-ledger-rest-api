@@ -15,9 +15,11 @@
 
 1. Clone the Repository and Change into the project directory
 2. Run `yarn install` to install the package dependencies 
-3. Run `yarn setup:env` to copy initialize environment variables
+3. Run `yarn setup:env:bash` or `yarn setup:env:cmd` (if on windows) to copy the initial environment variables
 4. The application can be run by executing `yarn start`
 5. You can use `yarn dev` to run the API in development mode
+
+_PS: Swagger is only available if you run in `development` mode_
 
 
 ## Generate a token
@@ -38,3 +40,5 @@ There are two types of tests written. There is a unit test for the `ledger.servi
 
 - You can run the tests by running the command `yarn test`
 - You can check the test covererage by running the command `yarn coverage`
+
+_PS: Tests do not cover all of the middleware functions available_

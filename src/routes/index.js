@@ -1,5 +1,4 @@
 const express = require("express");
-const statusRoute = require("./status.route");
 const accountingRoute = require("./accounting.route");
 const docsRoute = require("./docs.route");
 const config = require("../config/config");
@@ -7,10 +6,6 @@ const config = require("../config/config");
 const router = express.Router();
 
 const defaultRoutes = [
-  {
-    path: "/",
-    route: statusRoute,
-  },
   {
     path: "/accounting",
     route: accountingRoute,
