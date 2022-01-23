@@ -16,6 +16,10 @@
     "prettier:fix": "prettier --write **/*.js",
     "token:generate": "cross-env node ./scripts/generate-token.js"
   },
+  "pre-commit": [
+    "test",
+    "prettier:fix"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/avinduhewa/node-ledger-rest-api.git"
@@ -44,6 +48,7 @@
     "moment-timezone": "^0.5.34",
     "morgan": "^1.9.1",
     "pm2": "^5.1.0",
+    "pre-commit": "^1.2.2",
     "swagger-jsdoc": "^6.0.8",
     "swagger-ui-express": "^4.1.6",
     "validator": "^13.0.0",
