@@ -14,7 +14,8 @@
     "lint:fix": "eslint . --fix",
     "prettier": "prettier --check **/*.js",
     "prettier:fix": "prettier --write **/*.js",
-    "token:generate": "cross-env node ./scripts/generate-token.js"
+    "token:generate": "cross-env node ./scripts/generate-token.js",
+    "setup:env": "cp ./.env.example ./.env"
   },
   "pre-commit": [
     "test",
