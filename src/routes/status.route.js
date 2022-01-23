@@ -21,6 +21,7 @@ module.exports = router;
  *   get:
  *     summary: Get api status
  *     description: Fetches API status
+ *     tags: [Status]
  *     responses:
  *       "200":
  *         description: OK

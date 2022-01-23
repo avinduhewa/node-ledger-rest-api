@@ -93,7 +93,7 @@ const createLineItems = ({
     }
     return lineItems;
   } catch (err) {
-    throw new ApiError(err.status, err.message);
+    throw new ApiError(err.statusCode, err.message);
   }
 };
 

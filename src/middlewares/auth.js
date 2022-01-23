@@ -7,15 +7,17 @@ const authorize = (req, res, next) => {
   const token = req.headers["authorization"];
 
   if (!token) {
-    return res.send(new ApiError(httpStatus.FORBIDDEN, "Forbidden"));
+    return res
+      .status(httpStatus.FORBIDDEN)
+      .send(new ApiError(httpStatus.FORBIDDEN, "Forbidden"));
   }
   try {
     const decoded = jwt.verify(token.replace("Bearer ", ""), config.token_key);
     req.user = decoded;
   } catch (err) {
-    return res.send(
-      new ApiError(httpStatus.UNAUTHORIZED, "Please authenticate")
-    );
+    return res
+      .status(httpStatus.UNAUTHORIZED)
+      .send(new ApiError(httpStatus.UNAUTHORIZED, "Please authenticate"));
   }
   return next();
 };

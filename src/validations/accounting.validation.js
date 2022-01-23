@@ -6,10 +6,13 @@ const { WEEKLY, FORTNIGHTLY, MONTHLY } = require("../config/constants");
 
 const getLedger = {
   query: Joi.object().keys({
-    start_date: Joi.date().iso(),
-    end_date: Joi.date().iso().min(Joi.ref("start_date")),
-    frequency: Joi.string().valid(WEEKLY, FORTNIGHTLY, MONTHLY).insensitive(),
-    weekly_rent: Joi.number().min(1),
+    start_date: Joi.date().iso().required(),
+    end_date: Joi.date().iso().min(Joi.ref("start_date")).required(),
+    frequency: Joi.string()
+      .valid(WEEKLY, FORTNIGHTLY, MONTHLY)
+      .insensitive()
+      .required(),
+    weekly_rent: Joi.number().min(1).required(),
     timezone: Joi.timezone().required(),
   }),
 };
