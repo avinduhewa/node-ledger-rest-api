@@ -18,8 +18,8 @@ _PS: since the `ledger.service` doesnt maintain a state and simply transforms th
 1. Clone the Repository and Change into the project directory
 2. Run `yarn install` to install the package dependencies 
 3. Run `yarn setup:env:bash` or `yarn setup:env:cmd` (if on windows) to copy the initial environment variables
-4. The application can be run by executing `yarn start`
-5. You can use `yarn dev` to run the API in development mode
+4. The application can be run by executing `yarn dev`
+5. You can use `yarn start` to run the API in production mode using PM2 (optional)
 
 _PS: Swagger is only available if you run in `development` mode_
 
